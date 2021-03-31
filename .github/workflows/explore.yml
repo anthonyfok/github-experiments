@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  explore-ubuntu-runner:
+  explore-linux-runner:
     runs-on: ubuntu-20.04
     if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]')"
 
@@ -25,7 +25,7 @@ jobs:
           docker ps
           free -h
           sudo apt update -q
-          sudo apt install --no-install-recommends -q -y duc-nox
+          sudo apt install --no-install-recommends -q -y backblaze-b2 duc-nox
 
       - name: Tree
         run: |
@@ -45,3 +45,42 @@ jobs:
           backblaze-b2 upload-file OpenDRR .duc.db github-ubuntu-20.04.duc.db
           backblaze-b2 upload-file OpenDRR tree.txt github-ubuntu-20.04-tree.txt
           backblaze-b2 clear-account
+
+
+  explore-macos-runner:
+    runs-on: macos-latest
+    if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]')"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Exploration
+        run: |
+          set -x
+          ls -l
+          df -h
+          whoami
+          docker ps
+          vm_stat
+
+      - name: Download OpenQuake
+        run: curl https://raw.githubusercontent.com/gem/oq-engine/master/install.py -O
+
+      - name: Install OpenQuake
+        run: |
+          set -x
+          python3 --version
+          python3 install.py user
+
+      - name: See OpenQuake installation
+        run: |
+          set -x
+          pwd
+          du -csh *
+          du -csh ~/*
+
+      - name: Run OpenQuake
+        run: |
+          source ~/openquake/bin/activate
+
