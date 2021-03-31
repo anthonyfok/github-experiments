@@ -15,6 +15,7 @@ jobs:
       - name: Exploration
         run: |
           set -x
+          pwd
           ls -l
           df -h
           whoami
@@ -27,7 +28,7 @@ jobs:
 
       - name: Tree
         run: |
-          tree -ifpugDs / > tree.txt
+          tree -ifpugDs / > ~/tree.txt
           
       - name: Duc
         run: duc index /
@@ -40,8 +41,8 @@ jobs:
           set -x
           backblaze-b2 version
           backblaze-b2 authorize-account "$OPENDRR_B2_KEY_ID" "$OPENDRR_B2_APPLICATION_KEY"
-          backblaze-b2 upload-file OpenDRR .duc.db github-ubuntu-20.04.duc.db
-          backblaze-b2 upload-file OpenDRR tree.txt github-ubuntu-20.04-tree.txt
+          backblaze-b2 upload-file OpenDRR ~/.duc.db github-ubuntu-20.04.duc.db
+          backblaze-b2 upload-file OpenDRR ~/tree.txt github-ubuntu-20.04-tree.txt
           backblaze-b2 clear-account
 
 
