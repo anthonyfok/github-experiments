@@ -1,8 +1,6 @@
 name: Explore GitHub-hosted runners
 
 on:
-  push:
-  pull_request:
   workflow_dispatch:
 
 jobs:
@@ -61,8 +59,8 @@ jobs:
           ls -l
           df -h
           whoami
-          docker ps
           vm_stat
+          which brew || :
 
       - name: Download OpenQuake
         run: curl https://raw.githubusercontent.com/gem/oq-engine/master/install.py -O
