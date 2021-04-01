@@ -26,7 +26,6 @@ jobs:
           set -x
           pwd
           ls -l
-          df -h
           whoami
           cat /etc/os-release
           cat /proc/cpuinfo
@@ -34,10 +33,10 @@ jobs:
           free -h
           sudo apt update -q
           # sudo apt install --no-install-recommends -q -y backblaze-b2 duc-nox
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf /usr/share/swift
           df -h
-
+          sudo eatmydata rm -rf /usr/share/dotnet
+          sudo eatmydata rm -rf /usr/share/swift
+          df -h
 
       - name: Tree
         if: ${{ github.event.inputs.runTreeAndDuc != 'false' }}
@@ -67,8 +66,11 @@ jobs:
     if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]')"
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+          architecture: 'x64'
 
       - name: Exploration
         run: |
@@ -85,8 +87,9 @@ jobs:
       - name: Install OpenQuake
         run: |
           set -x
-          python3.8 --version
-          python3.8 install.py user
+          python --version
+          python3 --version
+          python3 install.py user
 
       - name: See OpenQuake installation
         run: |
