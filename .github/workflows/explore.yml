@@ -1,7 +1,16 @@
 name: Explore GitHub-hosted runners
 
+# References:
+# https://github.blog/changelog/2020-07-06-github-actions-manual-triggers-with-workflow_dispatch/
+# https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#inputs
+
 on:
   workflow_dispatch:
+    inputs:
+      runTreeAndDuc:
+        description: 'Run tree and duc?'
+        required: true
+        default: 'false'
 
 jobs:
   explore-linux-runner:
@@ -24,16 +33,23 @@ jobs:
           docker ps
           free -h
           sudo apt update -q
-          sudo apt install --no-install-recommends -q -y backblaze-b2 duc-nox
+          # sudo apt install --no-install-recommends -q -y backblaze-b2 duc-nox
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/share/swift
+          df -h
+
 
       - name: Tree
+        if: ${{ github.event.inputs.runTreeAndDuc != 'false' }}
         run: |
           tree -ifpugDs / > ~/tree.txt
           
       - name: Duc
+        if: ${{ github.event.inputs.runTreeAndDuc != 'false' }}
         run: duc index /
 
       - name: Upload to Backblaze B2
+        if: ${{ github.event.inputs.runTreeAndDuc != 'false' }}
         env:
           OPENDRR_B2_KEY_ID: ${{ secrets.OPENDRR_B2_KEY_ID }}
           OPENDRR_B2_APPLICATION_KEY: ${{ secrets.OPENDRR_B2_APPLICATION_KEY }}
@@ -69,8 +85,8 @@ jobs:
       - name: Install OpenQuake
         run: |
           set -x
-          python3 --version
-          python3 install.py user
+          python3.8 --version
+          python3.8 install.py user
 
       - name: See OpenQuake installation
         run: |
