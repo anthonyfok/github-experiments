@@ -38,8 +38,8 @@ jobs:
 
       - name: Install GNU time
         run: |
-          apt-get update
-          apt-get install -y eatmydata time
+          sudo stdbuf -oL apt-get update
+          sudo stdbuf -oL apt-get install -y eatmydata time
 
       - name: Check size of OpenQuake installation
         run: |
@@ -57,9 +57,9 @@ jobs:
           sed -i -e 's/_UPDATED//' OpenQuake_model_files/runfiles/west-not-updated/*.ini
 
           for i in OpenQuake_model_files/runfiles/west-not-updated/*.ini; do
-            echo "========================================================================"
-            echo
-            echo "Processing $i ..."
-            echo
-            /usr/bin/time -v ~/openquake/bin/oq run $i
+            stdbuf -oL echo "========================================================================"
+            stdbuf -oL echo
+            stdbuf -oL echo "Processing $i ..."
+            stdbuf -oL echo
+            /usr/bin/time -v stdbuf -oL ~/openquake/bin/oq run $i
           done
