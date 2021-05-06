@@ -1,0 +1,66 @@
+name: OpenQuake on Ubuntu demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  explore-macos-runner:
+    runs-on: ubuntu-20.04
+    if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]')"
+
+    steps:
+      - name: Checkout CanadaSHM6
+        uses: actions/checkout@v2
+        with:
+          repository: OpenDRR/CanadaSHM6
+          token: ${{ secrets.MY_PAT }}
+
+      - name: Cache OpenQuake
+        uses: actions/cache@v2
+        with:
+          path: ~/openquake
+          key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+
+      - name: Exploration
+        run: |
+          set -x
+          ls -l
+          df -h
+          whoami
+          vm_stat
+          which brew || :
+
+      - name: Install OpenQuake
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          set -x
+          curl https://raw.githubusercontent.com/gem/oq-engine/master/install.py -O
+          python3 install.py user
+
+      - name: Install GNU time
+        run: |
+          apt-get update
+          apt-get install -y eatmydata time
+
+      - name: Check size of OpenQuake installation
+        run: |
+          set -x
+          pwd
+          du -csh *
+          du -csh ~/*
+
+      - name: Run OpenQuake
+        run: |
+          source ~/openquake/bin/activate
+
+          # Workaround for some updated logic tree files not yet pushed and committed to GitHub
+          cp -av OpenQuake_model_files/runfiles/west OpenQuake_model_files/runfiles/west-not-updated
+          sed -i -e 's/_UPDATED//' OpenQuake_model_files/runfiles/west-not-updated/*.ini
+
+          for i in OpenQuake_model_files/runfiles/west-not-updated/*.ini; do
+            echo "========================================================================"
+            echo
+            echo "Processing $i ..."
+            echo
+            /usr/bin/time -v ~/openquake/bin/oq run $i
+          done
