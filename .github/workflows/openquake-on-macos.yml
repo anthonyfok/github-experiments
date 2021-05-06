@@ -42,6 +42,10 @@ jobs:
           curl https://raw.githubusercontent.com/gem/oq-engine/master/install.py -O
           python3 install.py user
 
+      - name: Install GNU time
+        run: |
+          brew install gnu-time
+
       - name: Check size of OpenQuake installation
         run: |
           set -x
@@ -62,5 +66,5 @@ jobs:
             echo
             echo "Processing $i ..."
             echo
-            /usr/bin/time -v ~/openquake/bin/oq run $i 
+            gtime -v ~/openquake/bin/oq run $i
           done
