@@ -42,9 +42,9 @@ jobs:
           curl https://raw.githubusercontent.com/gem/oq-engine/master/install.py -O
           python3 install.py user
 
-      - name: Install GNU time
+      - name: Install GNU coreutils and gnu-time
         run: |
-          brew install gnu-time
+          brew install coreutils gnu-time
 
       - name: Check size of OpenQuake installation
         run: |
@@ -62,9 +62,9 @@ jobs:
           sed -i -e 's/_UPDATED//' OpenQuake_model_files/runfiles/west-not-updated/*.ini
 
           for i in OpenQuake_model_files/runfiles/west-not-updated/*.ini; do
-            echo "========================================================================"
-            echo
-            echo "Processing $i ..."
-            echo
-            gtime -v ~/openquake/bin/oq run $i
+            gstdbuf -oL echo "========================================================================"
+            gstdbuf -oL echo
+            gstdbuf -oL echo "Processing $i ..."
+            gstdbuf -oL echo
+            gtime -v gstdbuf -oL ~/openquake/bin/oq run $i
           done
