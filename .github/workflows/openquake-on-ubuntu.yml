@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  explore-macos-runner:
+  openquake-on-ubuntu-demo:
     runs-on: ubuntu-20.04
     if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]')"
 
