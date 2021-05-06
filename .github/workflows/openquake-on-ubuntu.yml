@@ -27,8 +27,7 @@ jobs:
           ls -l
           df -h
           whoami
-          vm_stat
-          which brew || :
+          free -h
 
       - name: Install OpenQuake
         if: steps.cache.outputs.cache-hit != 'true'
