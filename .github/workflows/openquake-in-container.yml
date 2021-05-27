@@ -26,8 +26,6 @@ jobs:
       # openquake/engine:3.11 has ~/.local but not /usr/src/oq-engine
       # openquake/engine:nightly has /usr/src/oq-engine but not ~/.local
       image: openquake/engine:nightly
-      volumes:
-        - /w__:/home/openquake/work
 
     steps:
       - name: Fix permissions of HOME and GITHUB_WORKSPACE
