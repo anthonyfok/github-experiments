@@ -1,4 +1,4 @@
-name: OpenQuake on Ubuntu demo
+name: "OQ on Ubuntu demo > 6h"
 
 on:
   workflow_dispatch:
@@ -17,9 +17,10 @@ jobs:
 
       - name: Cache OpenQuake
         uses: actions/cache@v2
+        id: cache
         with:
           path: ~/openquake
-          key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+          key: ${{ runner.os }}-OpenQuake
 
       - name: Exploration
         run: |
