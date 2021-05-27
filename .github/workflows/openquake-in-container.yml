@@ -84,8 +84,7 @@ jobs:
       - name: "OpenQuake: Run Hazard calculation provided by Tiegan"
         env:
           JOBDIR: private/thobbs/scenario-catalogue/deterministic/initializations
-          SCRIPTS_LOC: private/thobbs/scenario-catalogue/scripts
-          AVGHAZLOC: $SCRIPTS_LOC/weightHAZ.py
+          AVGHAZLOC: private/scenario-catalogue/scripts/weightHAZ.py
           NAME: IDM5p7_CR2022Aftershock
         run: |
           sudo cp -av private/CanadaSHM6/OpenQuake_model_files/gmms/gsim/CanadaSHM6_* /usr/src/oq-engine/openquake/hazardlib/gsim/
