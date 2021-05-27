@@ -15,6 +15,9 @@ on:
 jobs:
   openquake-in-container-demo:
     runs-on: ubuntu-20.04
+    env:
+      HOME: /home/openquake
+      GITHUB_WORKSPACE: /home/openquake/work
     #defaults:
     #  run:
     #    working-directory: /home/openquake/work
@@ -27,8 +30,15 @@ jobs:
         - /w__:/home/openquake/work
 
     steps:
-      - name: Fix permissions
-        run: sudo chown -R openquake:openquake $HOME $GITHUB_WORKSPACE
+      - name: Fix permissions of HOME and GITHUB_WORKSPACE
+        run: |
+          echo "HOME=\"$HOME\""
+          echo "GITHUB_WORKSPACE=\"$GITHUB_WORKSPACE\""
+          echo "Before:"
+          ls -l $HOME $GITHUB_WORKSPACE
+          sudo chown -R openquake:openquake $HOME $GITHUB_WORKSPACE
+          echo "After"
+          ls -l $HOME $GITHUB_WORKSPACE
 
       - name: Checkout secret OpenQuake-GitHub-Actions-demo repo
         uses: actions/checkout@v2
