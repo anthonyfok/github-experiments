@@ -1,0 +1,81 @@
+name: OpenQuake in container demo
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+# HOME: /github/home
+# GITHUB_WORKSPACE: /__w/github-experiments/github-experiments
+
+jobs:
+  openquake-in-container-demo:
+    runs-on: ubuntu-20.04
+    #defaults:
+    #  run:
+    #    working-directory: /home/openquake/work
+    if: "!contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]')"
+    container:
+      # openquake/engine:3.11 has ~/.local but not /usr/src/oq-engine
+      # openquake/engine:nightly has /usr/src/oq-engine but not ~/.local
+      image: openquake/engine:nightly
+      volumes:
+        - /w__:/home/openquake/work
+
+    steps:
+      - name: Fix permissions
+        run: sudo chown -R openquake:openquake $HOME $GITHUB_WORKSPACE
+
+      - name: Checkout secret OpenQuake-GitHub-Actions-demo repo
+        uses: actions/checkout@v2
+        with:
+          repository: OpenDRR/OpenQuake-GitHub-Actions-demo
+          token: ${{ secrets.MY_PAT }}
+
+      - name: Exploration
+        run: |
+          set -x
+          pwd
+          ls -l
+          df -h
+          whoami
+          free -h
+          cat /etc/os-release
+
+      - name: Install GNU time
+        run: |
+          # Only openquake/engine:nightly has sudo
+          if type sudo; then
+            sudo stdbuf -oL apt-get update
+            sudo stdbuf -oL apt-get install -y time
+          fi
+
+      - name: Check size of OpenQuake installation
+        run: |
+          set -x
+          pwd
+          du -csh *
+          du -csh /opt/openquake
+          du -csh ~/.local/* || true
+          du -csh /usr/src/oq-engine || true
+
+      - name: Run OpenQuake with AreaSourceClassicalPSHA demo
+        run: |
+          if type /usr/bin/time; then
+            /usr/bin/time -v stdbuf -oL oq engine --run /usr/src/oq-engine/demos/hazard/AreaSourceClassicalPSHA/job.ini
+          else
+            time stdbuf -oL oq engine --run /usr/src/oq-engine/demos/hazard/AreaSourceClassicalPSHA/job.ini
+          fi
+
+      - name: Run OpenQuake with data provided by Tiegan
+        run: |
+          sudo cp -av CanadaSHM6/OpenQuake_model_files/gmms/gsim/CanadaSHM6_* /usr/src/oq-engine/openquake/hazardlib/gsim/
+          if type /usr/bin/time; then
+            /usr/bin/time -v stdbuf -oL oq engine --run thobbs/scenario-catalogue/deterministic/initializations/s_Hazard_IDM5p7_CR2022Aftershock.ini
+          else
+            time stdbuf -oL oq engine --run thobbs/scenario-catalogue/deterministic/initializations/s_Hazard_IDM5p7_CR2022Aftershock.ini
+          fi
