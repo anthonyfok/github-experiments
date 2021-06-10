@@ -32,12 +32,15 @@ jobs:
           docker ps
           free -h
           sudo apt update -q
-          # sudo apt install --no-install-recommends -q -y backblaze-b2 duc-nox
           df -h
           mkdir ~/emptydir
           sudo eatmydata rsync -a --delete ~/emptydir /usr/share/dotnet
           sudo eatmydata rsync -a --delete ~/emptydir /usr/share/swift
           df -h
+
+      - name: Install backblaze-b2 and duc-nox conditionally
+        if: ${{ github.event.inputs.runTreeAndDuc != 'false' }}
+        run: sudo apt install --no-install-recommends -q -y backblaze-b2 duc-nox
 
       - name: Tree
         if: ${{ github.event.inputs.runTreeAndDuc != 'false' }}
