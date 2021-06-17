@@ -30,6 +30,8 @@ jobs:
           cat /etc/os-release
           cat /proc/cpuinfo
           docker ps
+          docker compose --help || echo "No \"docker compose\""
+          docker-compose --help
           free -h
           sudo apt update -q
           df -h
