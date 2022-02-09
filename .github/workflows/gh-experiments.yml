@@ -24,10 +24,10 @@ jobs:
         run: |
           repos=($(gh repo list OpenDRR -L 200 | cut -f1))
           for i in "${repos[@]}"; do
-            GIT_LFS_SKIP_SMUDGE=1 gh repo clone "$i"
-            pushd "$i"
-            git lfs ls-files --debug | grep size: | grep -o '[0-9]\+' | paste -sd + - | bc | numfmt --to=iec --round=nearest --format="%.3f"
-            git lfs ls-files --debug --all | grep size: | grep -o '[0-9]\+' | paste -sd + - | bc | numfmt --to=iec --round=nearest --format="%.3f"
+            GIT_LFS_SKIP_SMUDGE=1 time gh repo clone "$i"
+            pushd "${i##*/}"
+            time git lfs ls-files --debug | grep size: | grep -o '[0-9]\+' | paste -sd + - | bc | numfmt --to=iec --round=nearest --format="%.3f"
+            time git lfs ls-files --debug --all | grep size: | grep -o '[0-9]\+' | paste -sd + - | bc | numfmt --to=iec --round=nearest --format="%.3f"
             popd
           done
         env:
