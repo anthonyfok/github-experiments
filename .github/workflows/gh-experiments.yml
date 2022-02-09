@@ -28,7 +28,8 @@ jobs:
         run: |
           repos=($(gh repo list OpenDRR -L 200 | cut -f1))
           for i in "${repos[@]}"; do
-            GIT_LFS_SKIP_SMUDGE=1 time gh repo clone "$i"
+            # GIT_LFS_SKIP_SMUDGE=1 time gh repo clone "$i"
+            GIT_LFS_SKIP_SMUDGE=1 time git clone https://github.com/"$i".git
             pushd "${i##*/}"  # See https://unix.stackexchange.com/questions/253524/dirname-and-basename-vs-parameter-expansion
             git lfs ls-files --debug | grep size: | grep -o '[0-9]\+' | paste -sd + - | bc | numfmt --to=iec --round=nearest --format="%.3f"
             git lfs ls-files --debug --all | grep size: | grep -o '[0-9]\+' | paste -sd + - | bc | numfmt --to=iec --round=nearest --format="%.3f"
