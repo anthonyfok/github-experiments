@@ -22,7 +22,7 @@ jobs:
       - name: Checkout and set auth token in local git config
         uses: actions/checkout@v2
         with:
-          token: ${{ secrets.MY_OPENDRR_API_TOKEN }}
+          token: ${{ secrets.MY_PAT }}
 
       - name: Calculate Git LFS data (storage) usage for each repo, see https://github.com/OpenDRR/opendrr/issues/133
         run: |
