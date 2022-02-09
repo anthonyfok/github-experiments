@@ -1,0 +1,25 @@
+name: Explore gh
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      releaseTagForUploadingAssets:
+        description: 'Existing release tag for uploading assets'
+        required: false
+
+jobs:
+  gh-repo-list:
+    runs-on: ubuntu-latest
+    steps:
+      - name: List all OpenDRR repos
+        run: gh repo list OpenDRR -L 200
+      - run: gh repo list OpenDRR -L 200 | cut -f1
+      - name:
+        run: |
+          for i in $(gh repo list OpenDRR -L 200 | cut -f1); do
+            echo $i
+          done
+
