@@ -16,10 +16,16 @@ jobs:
     steps:
       - name: List all OpenDRR repos
         run: gh repo list OpenDRR -L 200
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: gh repo list OpenDRR -L 200 | cut -f1
-      - name:
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Test script
         run: |
           for i in $(gh repo list OpenDRR -L 200 | cut -f1); do
             echo $i
           done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
