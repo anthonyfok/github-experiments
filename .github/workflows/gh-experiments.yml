@@ -19,8 +19,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # https://github.com/OpenDRR/opendrr/issues/133
-      - name: Calculate Git LFS data (storage) usage for each repo
+      - name: Checkout and set auth token in local git config
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.MY_OPENDRR_API_TOKEN }}
+
+      - name: Calculate Git LFS data (storage) usage for each repo, see https://github.com/OpenDRR/opendrr/issues/133
         run: |
           repos=($(gh repo list OpenDRR -L 200 | cut -f1))
           for i in "${repos[@]}"; do
@@ -31,4 +35,4 @@ jobs:
             popd
           done
         env:
-          GITHUB_TOKEN: ${{ secrets.MY_OPENDRR_API_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.MY_PAT }}
