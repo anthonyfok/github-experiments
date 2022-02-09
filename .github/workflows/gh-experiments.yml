@@ -14,18 +14,21 @@ jobs:
   gh-repo-list:
     runs-on: ubuntu-latest
     steps:
-      - name: List all OpenDRR repos
+      - name: List all OpenDRR (public) repos
         run: gh repo list OpenDRR -L 200
         env:
-          GITHUB_TOKEN: ${{ secrets.MY_PAT }}
-      - run: gh repo list OpenDRR -L 200 | cut -f1
-        env:
-          GITHUB_TOKEN: ${{ secrets.MY_PAT }}
-      - name: Test script
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # https://github.com/OpenDRR/opendrr/issues/133
+      - name: Calculate Git LFS data (storage) usage for each repo
         run: |
-          for i in $(gh repo list OpenDRR -L 200 | cut -f1); do
-            echo $i
+          repos=($(gh repo list OpenDRR -L 200 | cut -f1))
+          for i in "${repos[@]}"; do
+            GIT_LFS_SKIP_SMUDGE=1 gh repo clone "$i"
+            pushd "$i"
+            git lfs ls-files --debug | grep size: | grep -o '[0-9]\+' | paste -sd + - | bc | numfmt --to=iec --round=nearest --format="%.3f"
+            git lfs ls-files --debug --all | grep size: | grep -o '[0-9]\+' | paste -sd + - | bc | numfmt --to=iec --round=nearest --format="%.3f"
+            popd
           done
         env:
           GITHUB_TOKEN: ${{ secrets.MY_PAT }}
-
