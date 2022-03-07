@@ -1,0 +1,12 @@
+name: gh (GitHub CLI) test
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  test-gh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check gh version
+        run: gh --version
